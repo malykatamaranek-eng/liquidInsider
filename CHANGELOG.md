@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2024-02-01
+
+### Security
+- **CRITICAL**: Updated `next` from 14.0.4 to 15.2.9 to fix multiple critical vulnerabilities:
+  - DoS via HTTP request deserialization with React Server Components
+  - Authorization bypass in middleware
+  - Cache poisoning vulnerability
+  - Server-Side Request Forgery (SSRF) in Server Actions
+  - RCE vulnerability in React flight protocol
+- **HIGH**: Updated `multer` from 1.4.5-lts.1 to 2.0.2 to fix multiple DoS vulnerabilities:
+  - DoS via unhandled exception from malformed requests
+  - DoS via memory leaks from unclosed streams
+  - DoS from maliciously crafted requests
+- **MEDIUM**: Updated `nodemailer` from 6.9.7 to 7.0.7 to fix email domain interpretation conflict
+- Updated `@types/multer` to 2.0.0 for compatibility with multer 2.x
+- Updated `eslint-config-next` to 15.2.9 for compatibility with Next.js 15.x
+- **Result**: ✅ Zero known vulnerabilities remaining
+
 ## [1.0.0] - 2024-02-01
 
 ### Added

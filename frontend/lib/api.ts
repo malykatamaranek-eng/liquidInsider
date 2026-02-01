@@ -270,4 +270,41 @@ export const adminAPI = {
   },
 };
 
+// Image API
+export const imageAPI = {
+  uploadImages: async (productId: string, files: File[]): Promise<any> => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    const { data } = await api.post(`/products/${productId}/images`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  },
+
+  getProductImages: async (productId: string): Promise<any> => {
+    const { data } = await api.get(`/products/${productId}/images`);
+    return data;
+  },
+
+  deleteImage: async (productId: string, imageId: string): Promise<any> => {
+    const { data } = await api.delete(`/products/${productId}/images/${imageId}`);
+    return data;
+  },
+
+  reorderImages: async (productId: string, imageOrders: Array<{ imageId: string; displayOrder: number }>): Promise<any> => {
+    const { data } = await api.put(`/products/${productId}/images/reorder`, { imageOrders });
+    return data;
+  },
+
+  setPrimaryImage: async (productId: string, imageId: string): Promise<any> => {
+    const { data } = await api.put(`/products/${productId}/images/${imageId}/primary`);
+    return data;
+  },
+};
+
 export default api;

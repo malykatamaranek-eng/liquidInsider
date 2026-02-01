@@ -21,8 +21,8 @@ const router = Router();
 router.get('/', getProducts);
 router.get('/featured', getFeaturedProducts);
 router.get('/:id', getProductById);
-router.post('/', authenticate, authorize([Role.ADMIN]), validate(createProductSchema), createProduct);
-router.put('/:id', authenticate, authorize([Role.ADMIN]), validate(updateProductSchema), updateProduct);
-router.delete('/:id', authenticate, authorize([Role.ADMIN]), deleteProduct);
+router.post('/', authenticate, authorize(Role.ADMIN), validate(createProductSchema), createProduct);
+router.put('/:id', authenticate, authorize(Role.ADMIN), validate(updateProductSchema), updateProduct);
+router.delete('/:id', authenticate, authorize(Role.ADMIN), deleteProduct);
 
 export default router;

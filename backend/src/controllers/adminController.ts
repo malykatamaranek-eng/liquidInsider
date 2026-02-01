@@ -182,7 +182,7 @@ export const getTopProducts = async (
         return {
           ...product,
           sales_count: item._sum.quantity,
-          revenue: (item._sum.quantity || 0) * (product?.price || 0),
+          revenue: (item._sum.quantity || 0) * (product ? Number(product.price) : 0),
         };
       })
     );
@@ -217,7 +217,7 @@ export const getSalesData = async (
       totalOrders: sales._count,
       newCustomers: 0, // TODO: implement
       returningCustomers: 0, // TODO: implement
-      averageOrderValue: sales._count > 0 ? (sales._sum.total || 0) / sales._count : 0,
+      averageOrderValue: sales._count > 0 ? Number(sales._sum.total || 0) / sales._count : 0,
     });
   } catch (error) {
     next(error);

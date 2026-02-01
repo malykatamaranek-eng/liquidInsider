@@ -19,8 +19,8 @@ const router = Router();
 
 router.post('/', authenticate, validate(createOrderSchema), createOrder);
 router.get('/', authenticate, getOrders);
-router.get('/user/:userId', authenticate, authorize([Role.ADMIN]), getOrdersByUserId);
+router.get('/user/:userId', authenticate, authorize(Role.ADMIN), getOrdersByUserId);
 router.get('/:id', authenticate, getOrderById);
-router.put('/:id/status', authenticate, authorize([Role.ADMIN]), validate(updateOrderStatusSchema), updateOrderStatus);
+router.put('/:id/status', authenticate, authorize(Role.ADMIN), validate(updateOrderStatusSchema), updateOrderStatus);
 
 export default router;

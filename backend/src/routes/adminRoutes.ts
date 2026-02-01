@@ -10,8 +10,7 @@ import {
   getSettings,
   updateSettings,
 } from '../controllers/adminController';
-import { authenticate } from '../middleware/auth';
-import { authorize } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 import { Role } from '@prisma/client';
 
 const router = Router();

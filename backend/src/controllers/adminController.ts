@@ -215,8 +215,8 @@ export const getSalesData = async (
     res.json({
       totalSales: sales._sum.total || 0,
       totalOrders: sales._count,
-      newCustomers: 0, // TODO: implement
-      returningCustomers: 0, // TODO: implement
+      newCustomers: 0, // TODO: implement customer tracking to differentiate new vs returning
+      returningCustomers: 0, // TODO: implement customer tracking based on order history
       averageOrderValue: sales._count > 0 ? Number(sales._sum.total || 0) / sales._count : 0,
     });
   } catch (error) {

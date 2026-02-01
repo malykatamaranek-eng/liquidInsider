@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { cartAPI } from '../api';
 import { useAuth } from './AuthContext';
 import type { Cart, CartItem } from '../types';

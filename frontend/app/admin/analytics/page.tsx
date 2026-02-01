@@ -5,12 +5,14 @@ import { adminAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 
+const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
+
 export default function AnalyticsPage() {
   const [topProducts, setTopProducts] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    startDate: new Date(Date.now() - THIRTY_DAYS_IN_MS)
       .toISOString()
       .split('T')[0],
     endDate: new Date().toISOString().split('T')[0],

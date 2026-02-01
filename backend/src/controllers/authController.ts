@@ -6,6 +6,7 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '.
 import { AppError } from '../middleware/errorHandler';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email';
 import { generateVerificationToken, generateResetToken } from '../utils/jwt';
+import logger from '../utils/logger';
 
 export const register = async (
   req: AuthRequest,
@@ -45,10 +46,9 @@ export const register = async (
       },
     });
 
-    // Send verification email asynchronously - don't wait for it
     if (process.env.NODE_ENV !== 'test') {
       sendVerificationEmail(email, verifyToken).catch((err) => {
-        console.error('Failed to send verification email:', err);
+        logger.error('Failed to send verification email:', err);
       });
     }
 
@@ -209,9 +209,8 @@ export const forgotPassword = async (
     });
 
     if (process.env.NODE_ENV !== 'test') {
-      // Send email asynchronously - don't wait for it
       sendPasswordResetEmail(email, resetToken).catch((err) => {
-        console.error('Failed to send password reset email:', err);
+        logger.error('Failed to send password reset email:', err);
       });
     }
 

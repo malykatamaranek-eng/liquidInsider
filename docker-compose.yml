@@ -53,7 +53,12 @@ services:
     command: >
       sh -c "
         echo 'Waiting for database connection...' &&
-        sleep 15 &&
+        until nc -z postgres 5432; do
+          echo 'Database not ready yet, waiting...' &&
+          sleep 2
+        done &&
+        sleep 5 &&
+        echo 'Database is ready!' &&
         echo 'Running Prisma migrations...' &&
         npx prisma migrate deploy &&
         echo 'Generating Prisma client...' &&

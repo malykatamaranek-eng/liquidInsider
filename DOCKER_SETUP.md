@@ -19,6 +19,12 @@ copy .env.example .env  # Windows
 cp .env.example .env    # Mac/Linux
 ```
 
+**Important:** For production or sensitive development, edit `.env` and set strong JWT secrets:
+```bash
+JWT_SECRET="your-strong-random-secret-here-min-32-characters"
+JWT_REFRESH_SECRET="your-strong-random-refresh-secret-here"
+```
+
 ### 3. Start all services
 ```bash
 docker-compose up -d --build
@@ -101,8 +107,9 @@ docker-compose exec backend bash
 
 ### Port already in use
 Change ports in docker-compose.yml:
-- Frontend: `"3000:3000"` → `"3001:3000"`
-- Backend: `"3001:3001"` → `"3002:3001"`
+- Frontend: `"3000:3000"` → `"8080:3000"`
+- Backend: `"3001:3001"` → `"8081:3001"`
+- Postgres: `"5432:5432"` → `"5433:5432"`
 
 ### Database connection error
 1. Ensure postgres service is healthy: `docker-compose ps`

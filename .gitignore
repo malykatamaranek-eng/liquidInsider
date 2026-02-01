@@ -40,3 +40,7 @@ prisma/migrations/
 # Uploads
 uploads/
 *.exe
+
+# Logs
+logs/
+*.log

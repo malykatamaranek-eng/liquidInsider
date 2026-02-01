@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   register,
   login,
-  refreshToken,
+  refresh,
   verifyEmail,
   forgotPassword,
   resetPassword,
@@ -23,7 +23,7 @@ const router = Router();
 
 router.post('/register', validate(registerSchema), register);
 router.post('/login', authLimiter, validate(loginSchema), login);
-router.post('/refresh', refreshToken);
+router.post('/refresh', refresh);
 router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), resetPassword);

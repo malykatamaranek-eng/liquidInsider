@@ -63,9 +63,15 @@ export const register = async (
     });
 
     res.status(201).json({
-      user,
-      accessToken,
-      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        role: user.role,
+      },
+      access: accessToken,
+      refresh: refreshToken,
     });
   } catch (error) {
     next(error);
@@ -108,12 +114,12 @@ export const login = async (
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        first_name: user.firstName,
+        last_name: user.lastName,
         role: user.role,
       },
-      accessToken,
-      refreshToken,
+      access: accessToken,
+      refresh: refreshToken,
     });
   } catch (error) {
     next(error);
@@ -126,14 +132,14 @@ export const refresh = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { refreshToken } = req.body;
+    const { refresh } = req.body;
 
-    if (!refreshToken) {
+    if (!refresh) {
       throw new AppError('Refresh token required', 400);
     }
 
     // Verify refresh token
-    const decoded = verifyRefreshToken(refreshToken);
+    const decoded = verifyRefreshToken(refresh);
 
     // Generate new access token
     const accessToken = generateAccessToken({
@@ -142,7 +148,7 @@ export const refresh = async (
       role: decoded.role,
     });
 
-    res.json({ accessToken });
+    res.json({ access: accessToken });
   } catch (error) {
     next(error);
   }
@@ -271,7 +277,15 @@ export const getProfile = async (
       throw new AppError('User not found', 404);
     }
 
-    res.json(user);
+    res.json({
+      id: user.id,
+      email: user.email,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      role: user.role,
+      is_verified: user.isVerified,
+      created_at: user.createdAt,
+    });
   } catch (error) {
     next(error);
   }
@@ -301,7 +315,13 @@ export const updateProfile = async (
       },
     });
 
-    res.json(user);
+    res.json({
+      id: user.id,
+      email: user.email,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      role: user.role,
+    });
   } catch (error) {
     next(error);
   }

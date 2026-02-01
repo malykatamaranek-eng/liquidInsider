@@ -13,10 +13,6 @@ export const uploadProductImages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'ADMIN') {
-      throw new AppError('Unauthorized', 403);
-    }
-
     const { id: productId } = req.params;
 
     // Check if product exists
@@ -123,10 +119,6 @@ export const deleteProductImage = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'ADMIN') {
-      throw new AppError('Unauthorized', 403);
-    }
-
     const { id: productId, imageId } = req.params;
 
     const image = await prisma.productImage.findFirst({
@@ -181,10 +173,6 @@ export const reorderProductImages = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'ADMIN') {
-      throw new AppError('Unauthorized', 403);
-    }
-
     const { id: productId } = req.params;
     const { imageOrders } = req.body;
 
@@ -229,10 +217,6 @@ export const setPrimaryImage = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.user || req.user.role !== 'ADMIN') {
-      throw new AppError('Unauthorized', 403);
-    }
-
     const { id: productId, imageId } = req.params;
 
     // Check if image exists

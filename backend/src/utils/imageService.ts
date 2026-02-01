@@ -170,8 +170,9 @@ export const uploadImage = async (
   validateImage(file);
 
   const metadata = await getImageMetadata(file.buffer);
-  const fileName = `${randomUUID()}.jpg`;
-  const webpFileName = `${randomUUID()}.webp`;
+  const baseFileName = randomUUID();
+  const fileName = `${baseFileName}.jpg`;
+  const webpFileName = `${baseFileName}.webp`;
 
   // Process images in different sizes
   const original = await processImage(file.buffer, metadata.width, metadata.height, 'jpeg');

@@ -38,7 +38,7 @@ export default function EditProductPage() {
     try {
       setLoading(true);
       const [product, categoriesData, imagesData] = await Promise.all([
-        productsAPI.getById(productId),
+        productsAPI.getById(parseInt(productId)),
         categoriesAPI.getAll(),
         imageAPI.getProductImages(productId),
       ]);
@@ -82,7 +82,7 @@ export default function EditProductPage() {
 
     try {
       setSaving(true);
-      await adminAPI.updateProduct(productId, {
+      await adminAPI.updateProduct(parseInt(productId), {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock) || 0,
@@ -101,7 +101,7 @@ export default function EditProductPage() {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      await adminAPI.deleteProduct(productId);
+      await adminAPI.deleteProduct(parseInt(productId));
       toast.success('Product deleted successfully');
       router.push('/admin/products');
     } catch (error) {
@@ -113,7 +113,8 @@ export default function EditProductPage() {
     setUploadProgress(files.map((f) => ({ fileName: f.name, progress: 0 })));
 
     try {
-      // Simulate progress (in a real app, you'd track actual upload progress)
+      // TODO: Implement real progress tracking using XMLHttpRequest or fetch with progress events
+      // Currently simulating progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) =>
           prev.map((p) => ({

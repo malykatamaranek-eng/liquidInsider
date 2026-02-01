@@ -22,27 +22,31 @@ export default function ProductsPage() {
     try {
       setLoading(true);
       const [productsData, categoriesData] = await Promise.all([
-        adminAPI.getAllProducts().catch(() => []),
-        categoriesAPI.getAll().catch(() => []),
+        adminAPI.getAllProducts(),
+        categoriesAPI.getAll(),
       ]);
-      setProducts(productsData);
-      setCategories(categoriesData);
-    } catch (error) {
-      toast.error('Failed to load products');
+      setProducts(productsData || []);
+      setCategories(categoriesData || []);
+    } catch (error: any) {
+      console.error('Failed to load products:', error);
+      toast.error(error.response?.data?.message || 'Failed to load products');
+      setProducts([]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
       await adminAPI.deleteProduct(id);
       setProducts(products.filter((p) => p.id !== id));
       toast.success('Product deleted successfully');
-    } catch (error) {
-      toast.error('Failed to delete product');
+    } catch (error: any) {
+      console.error('Failed to delete product:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete product');
     }
   };
 
@@ -51,7 +55,7 @@ export default function ProductsPage() {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
-      !selectedCategory || product.category.id.toString() === selectedCategory;
+      !selectedCategory || product.category.id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 

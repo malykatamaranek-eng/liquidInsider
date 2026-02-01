@@ -26,13 +26,16 @@ export default function AnalyticsPage() {
     try {
       setLoading(true);
       const [productsData, sales] = await Promise.all([
-        adminAPI.getTopProducts().catch(() => []),
-        adminAPI.getSalesData(dateRange.startDate, dateRange.endDate).catch(() => null),
+        adminAPI.getTopProducts(),
+        adminAPI.getSalesData(dateRange.startDate, dateRange.endDate),
       ]);
-      setTopProducts(productsData);
+      setTopProducts(productsData || []);
       setSalesData(sales);
-    } catch (error) {
-      toast.error('Failed to load analytics');
+    } catch (error: any) {
+      console.error('Failed to load analytics:', error);
+      toast.error(error.response?.data?.message || 'Failed to load analytics');
+      setTopProducts([]);
+      setSalesData(null);
     } finally {
       setLoading(false);
     }

@@ -18,22 +18,25 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await adminAPI.getAllUsers().catch(() => []);
-      setUsers(data);
-    } catch (error) {
-      toast.error('Failed to load users');
+      const data = await adminAPI.getAllUsers();
+      setUsers(data || []);
+    } catch (error: any) {
+      console.error('Failed to load users:', error);
+      toast.error(error.response?.data?.message || 'Failed to load users');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRoleChange = async (userId: number, newRole: string) => {
+  const handleRoleChange = async (userId: string, newRole: string) => {
     try {
       const updated = await adminAPI.updateUserRole(userId, newRole);
       setUsers(users.map((u) => (u.id === userId ? updated : u)));
       toast.success('User role updated successfully');
-    } catch (error) {
-      toast.error('Failed to update user role');
+    } catch (error: any) {
+      console.error('Failed to update user role:', error);
+      toast.error(error.response?.data?.message || 'Failed to update user role');
     }
   };
 

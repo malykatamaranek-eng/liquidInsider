@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import path from 'path';
 import routes from './routes';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { generalLimiter } from './middleware/rateLimiter';
@@ -15,13 +16,19 @@ const app: Express = express();
 const PORT = process.env.PORT || 3001;
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
   })
 );
+
+// Serve static files (uploads)
+const UPLOAD_DIR = process.env.UPLOAD_DIR || './uploads/products';
+app.use('/uploads', express.static(path.join(__dirname, '..', UPLOAD_DIR)));
 
 // Rate limiting
 app.use('/api/', generalLimiter);

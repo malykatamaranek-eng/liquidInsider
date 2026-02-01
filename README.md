@@ -1,6 +1,25 @@
 # LiquidInsider - Advanced E-Commerce Platform
 
-A complete, production-ready e-commerce platform for selling liquids with modern tech stack.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
+
+A complete, production-ready e-commerce platform for selling liquids with modern tech stack. Built with Next.js 14, Express, TypeScript, PostgreSQL, and Prisma ORM.
+
+## ✨ Features
+
+- 🛍️ **Full E-Commerce Functionality**: Product catalog, cart, checkout, orders
+- 🔐 **Secure Authentication**: JWT with refresh tokens, bcrypt password hashing
+- 👥 **Multi-Role System**: Customer and Admin roles with different permissions
+- 📦 **Product Management**: Complete CRUD operations with categories and inventory
+- 💳 **Payment Integration**: Stripe payment processing ready
+- 📧 **Email Notifications**: Order confirmations, password resets
+- 📱 **Responsive Design**: Mobile-first, works on all devices
+- ⚡ **Performance Optimized**: Fast loading, efficient queries, image optimization
+- 🔒 **Security First**: Rate limiting, CORS, Helmet.js, input validation
+- 📊 **Admin Dashboard**: Sales metrics, order management, user management
+- 🎨 **Modern UI**: Tailwind CSS with smooth animations
 
 ## Tech Stack
 
@@ -79,13 +98,30 @@ liquidInsider/
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- PostgreSQL 15+
-- Docker & Docker Compose (optional)
-- Stripe account for payments
+### Quick Start with Docker (Recommended)
 
-### Installation
+The fastest way to get started:
+
+```bash
+# Clone the repository
+git clone https://github.com/malykatamaranek-eng/liquidInsider.git
+cd liquidInsider
+
+# Copy environment variables
+cp .env.example .env
+
+# Start all services (PostgreSQL, Backend, Frontend)
+docker-compose up -d
+
+# Wait for services to start, then visit:
+# - Frontend: http://localhost:3000
+# - Backend API: http://localhost:3001
+# - Admin Panel: http://localhost:3000/admin
+```
+
+### Manual Setup
+
+Prerequisites: Node.js 18+, PostgreSQL 15+
 
 1. **Clone the repository**
    ```bash
@@ -96,31 +132,34 @@ liquidInsider/
 2. **Setup environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # Edit .env with your local configuration
    ```
 
-3. **Using Docker (Recommended)**
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Manual Setup**
-
-   **Backend:**
+3. **Backend Setup**
    ```bash
    cd backend
    npm install
+   
+   # Setup database (make sure PostgreSQL is running)
    npx prisma migrate dev
    npx prisma generate
-   npm run seed  # Optional: Seed database with sample data
+   
+   # Seed database with sample data (optional)
+   npm run seed
+   
+   # Start backend server
    npm run dev
+   # Backend runs on http://localhost:3001
    ```
 
-   **Frontend:**
+4. **Frontend Setup** (in a new terminal)
    ```bash
    cd frontend
    npm install
+   
+   # Start frontend server
    npm run dev
+   # Frontend runs on http://localhost:3000
    ```
 
 ### Access the Application

@@ -7,6 +7,7 @@ import type {
   Category,
   Cart,
   Order,
+  OrderStatus,
   Payment,
   ProductFilters,
 } from './types';
@@ -190,6 +191,81 @@ export const paymentsAPI = {
 
   confirmPayment: async (paymentId: number): Promise<Payment> => {
     const { data } = await api.post(`/payments/${paymentId}/confirm`);
+    return data;
+  },
+};
+
+// Admin API
+export const adminAPI = {
+  // Dashboard
+  getStats: async (): Promise<any> => {
+    const { data } = await api.get('/admin/stats');
+    return data;
+  },
+
+  // Products
+  getAllProducts: async (): Promise<Product[]> => {
+    const { data } = await api.get('/admin/products');
+    return data;
+  },
+
+  createProduct: async (productData: any): Promise<Product> => {
+    const { data } = await api.post('/admin/products', productData);
+    return data;
+  },
+
+  updateProduct: async (id: number, productData: any): Promise<Product> => {
+    const { data } = await api.put(`/admin/products/${id}`, productData);
+    return data;
+  },
+
+  deleteProduct: async (id: number): Promise<void> => {
+    await api.delete(`/admin/products/${id}`);
+  },
+
+  // Orders
+  getAllOrders: async (): Promise<Order[]> => {
+    const { data } = await api.get('/admin/orders');
+    return data;
+  },
+
+  updateOrderStatus: async (id: number, status: OrderStatus): Promise<Order> => {
+    const { data } = await api.put(`/admin/orders/${id}/status`, { status });
+    return data;
+  },
+
+  // Users
+  getAllUsers: async (): Promise<User[]> => {
+    const { data } = await api.get('/admin/users');
+    return data;
+  },
+
+  updateUserRole: async (id: number, role: string): Promise<User> => {
+    const { data } = await api.put(`/admin/users/${id}/role`, { role });
+    return data;
+  },
+
+  // Analytics
+  getSalesData: async (startDate?: string, endDate?: string): Promise<any> => {
+    const { data } = await api.get('/admin/analytics/sales', {
+      params: { start_date: startDate, end_date: endDate },
+    });
+    return data;
+  },
+
+  getTopProducts: async (): Promise<any> => {
+    const { data } = await api.get('/admin/analytics/top-products');
+    return data;
+  },
+
+  // Settings
+  getSettings: async (): Promise<any> => {
+    const { data } = await api.get('/admin/settings');
+    return data;
+  },
+
+  updateSettings: async (settings: any): Promise<any> => {
+    const { data } = await api.put('/admin/settings', settings);
     return data;
   },
 };

@@ -5,6 +5,7 @@ export interface User {
   last_name: string;
   is_active: boolean;
   date_joined: string;
+  role?: 'USER' | 'ADMIN';
 }
 
 export interface LoginResponse {

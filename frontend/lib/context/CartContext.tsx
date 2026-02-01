@@ -37,15 +37,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      refreshCart();
-    } else {
-      setCart(null);
-    }
-  }, [isAuthenticated]);
-
-  const refreshCart = async () => {
+  const refreshCart = useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
@@ -59,7 +51,15 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshCart();
+    } else {
+      setCart(null);
+    }
+  }, [isAuthenticated, refreshCart]);
 
   const addToCart = async (productId: number, quantity: number = 1) => {
     if (!isAuthenticated) {

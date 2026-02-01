@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -21,6 +21,18 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const ordersData = await ordersAPI.getAll();
+      setOrders(ordersData);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/account/login');
@@ -32,19 +44,7 @@ export default function AccountPage() {
     } else {
       setLoading(false);
     }
-  }, [isAuthenticated, activeTab]);
-
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const ordersData = await ordersAPI.getAll();
-      setOrders(ordersData);
-    } catch (error) {
-      console.error('Failed to fetch orders:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [isAuthenticated, activeTab, fetchOrders, router]);
 
   if (!isAuthenticated || !user) {
     return null;

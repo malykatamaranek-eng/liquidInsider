@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -20,16 +20,7 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/account/login');
-      return;
-    }
-    
-    fetchOrder();
-  }, [isAuthenticated, params.id]);
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true);
       const orderData = await ordersAPI.getById(Number(params.id));
@@ -40,7 +31,16 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/account/login');
+      return;
+    }
+    
+    fetchOrder();
+  }, [isAuthenticated, router, fetchOrder]);
 
   const getStatusColor = (status: string) => {
     const colors = {

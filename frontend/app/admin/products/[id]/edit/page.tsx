@@ -2,19 +2,24 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { adminAPI, productsAPI, categoriesAPI } from '@/lib/api';
+import { adminAPI, productsAPI, categoriesAPI, imageAPI } from '@/lib/api';
 import { Product, Category } from '@/lib/types';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import ImageUploadZone from '@/components/ImageUploadZone';
+import ImageGallery from '@/components/ImageGallery';
+import UploadProgress from '@/components/UploadProgress';
 
 export default function EditProductPage() {
   const router = useRouter();
   const params = useParams();
-  const productId = parseInt(params.id as string);
+  const productId = params.id as string;
   
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [images, setImages] = useState<any[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{ fileName: string; progress: number }[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -32,9 +37,10 @@ export default function EditProductPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [product, categoriesData] = await Promise.all([
+      const [product, categoriesData, imagesData] = await Promise.all([
         productsAPI.getById(productId),
         categoriesAPI.getAll(),
+        imageAPI.getProductImages(productId),
       ]);
       
       setFormData({
@@ -47,6 +53,7 @@ export default function EditProductPage() {
         is_active: product.is_active,
       });
       setCategories(categoriesData);
+      setImages(imagesData.data || []);
     } catch (error) {
       toast.error('Failed to load product');
       router.push('/admin/products');
@@ -99,6 +106,37 @@ export default function EditProductPage() {
       router.push('/admin/products');
     } catch (error) {
       toast.error('Failed to delete product');
+    }
+  };
+
+  const handleFilesSelected = async (files: File[]) => {
+    setUploadProgress(files.map((f) => ({ fileName: f.name, progress: 0 })));
+
+    try {
+      // Simulate progress (in a real app, you'd track actual upload progress)
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) =>
+          prev.map((p) => ({
+            ...p,
+            progress: Math.min(p.progress + 10, 90),
+          }))
+        );
+      }, 200);
+
+      await imageAPI.uploadImages(productId, files);
+
+      clearInterval(progressInterval);
+      setUploadProgress(files.map((f) => ({ fileName: f.name, progress: 100 })));
+
+      toast.success('Images uploaded successfully');
+      setTimeout(() => {
+        setUploadProgress([]);
+        fetchData(); // Refresh images
+      }, 1000);
+    } catch (error) {
+      console.error('Failed to upload images:', error);
+      toast.error('Failed to upload images');
+      setUploadProgress([]);
     }
   };
 
@@ -256,6 +294,38 @@ export default function EditProductPage() {
           </div>
         </div>
       </form>
+
+      {/* Image Upload Section */}
+      <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        <h2 className="text-xl font-bold text-gray-900">Product Images</h2>
+
+        {/* Upload Zone */}
+        <div>
+          <ImageUploadZone onFilesSelected={handleFilesSelected} maxFiles={10} />
+        </div>
+
+        {/* Upload Progress */}
+        {uploadProgress.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Uploading...</h3>
+            {uploadProgress.map((progress, index) => (
+              <UploadProgress key={index} {...progress} />
+            ))}
+          </div>
+        )}
+
+        {/* Image Gallery */}
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 mb-4">
+            Uploaded Images ({images.length})
+          </h3>
+          <ImageGallery
+            productId={productId}
+            images={images}
+            onImagesChange={fetchData}
+          />
+        </div>
+      </div>
     </div>
   );
 }

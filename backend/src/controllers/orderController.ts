@@ -97,16 +97,18 @@ export const createOrder = async (
         },
       });
 
-      for (const item of cart.items) {
-        await tx.product.update({
-          where: { id: item.productId },
-          data: {
-            inventory: {
-              decrement: item.quantity,
+      await Promise.all(
+        cart.items.map((item) =>
+          tx.product.update({
+            where: { id: item.productId },
+            data: {
+              inventory: {
+                decrement: item.quantity,
+              },
             },
-          },
-        });
-      }
+          })
+        )
+      );
 
       await tx.cartItem.deleteMany({
         where: { cartId: cart.id },

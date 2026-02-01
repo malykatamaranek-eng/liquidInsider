@@ -111,13 +111,19 @@ cd liquidInsider
 cp .env.example .env
 
 # Start all services (PostgreSQL, Backend, Frontend)
-docker-compose up -d
+docker-compose up -d --build
 
-# Wait for services to start, then visit:
+# Wait 2-3 minutes for initialization, then visit:
 # - Frontend: http://localhost:3000
-# - Backend API: http://localhost:3001
+# - Backend API: http://localhost:3001/api
 # - Admin Panel: http://localhost:3000/admin
 ```
+
+**Login credentials:**
+- Email: `admin@liquidinsider.com`
+- Password: `admin123`
+
+For detailed Docker setup, see [DOCKER_SETUP.md](./DOCKER_SETUP.md)
 
 ### Manual Setup
 

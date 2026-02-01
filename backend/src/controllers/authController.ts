@@ -45,9 +45,11 @@ export const register = async (
       },
     });
 
-    // Send verification email
+    // Send verification email asynchronously - don't wait for it
     if (process.env.NODE_ENV !== 'test') {
-      await sendVerificationEmail(email, verifyToken);
+      sendVerificationEmail(email, verifyToken).catch((err) => {
+        console.error('Failed to send verification email:', err);
+      });
     }
 
     // Generate tokens
@@ -207,7 +209,10 @@ export const forgotPassword = async (
     });
 
     if (process.env.NODE_ENV !== 'test') {
-      await sendPasswordResetEmail(email, resetToken);
+      // Send email asynchronously - don't wait for it
+      sendPasswordResetEmail(email, resetToken).catch((err) => {
+        console.error('Failed to send password reset email:', err);
+      });
     }
 
     res.json({ message: 'If email exists, reset link has been sent' });

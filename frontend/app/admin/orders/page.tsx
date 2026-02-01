@@ -20,10 +20,12 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await adminAPI.getAllOrders().catch(() => []);
-      setOrders(data);
-    } catch (error) {
-      toast.error('Failed to load orders');
+      const data = await adminAPI.getAllOrders();
+      setOrders(data || []);
+    } catch (error: any) {
+      console.error('Failed to load orders:', error);
+      toast.error(error.response?.data?.message || 'Failed to load orders');
+      setOrders([]);
     } finally {
       setLoading(false);
     }

@@ -32,17 +32,20 @@ export default function SettingsPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const data = await adminAPI.getSettings().catch(() => ({
+      const data = await adminAPI.getSettings();
+      setSettings(data);
+    } catch (error: any) {
+      console.error('Failed to load settings:', error);
+      toast.error(error.response?.data?.message || 'Failed to load settings');
+      // Use default settings on error
+      setSettings({
         store_name: 'LiquidInsider',
         store_email: 'admin@liquidinsider.com',
         store_phone: '',
         shipping_rate: 5.99,
         free_shipping_threshold: 50,
         tax_rate: 8.5,
-      }));
-      setSettings(data);
-    } catch (error) {
-      toast.error('Failed to load settings');
+      });
     } finally {
       setLoading(false);
     }
@@ -63,8 +66,9 @@ export default function SettingsPage() {
       setSaving(true);
       await adminAPI.updateSettings(settings);
       toast.success('Settings updated successfully');
-    } catch (error) {
-      toast.error('Failed to update settings');
+    } catch (error: any) {
+      console.error('Failed to update settings:', error);
+      toast.error(error.response?.data?.message || 'Failed to update settings');
     } finally {
       setSaving(false);
     }

@@ -98,7 +98,7 @@ export const productsAPI = {
     return data;
   },
 
-  getById: async (id: number): Promise<Product> => {
+  getById: async (id: string): Promise<Product> => {
     const { data } = await api.get(`/products/${id}`);
     return data;
   },
@@ -116,12 +116,12 @@ export const categoriesAPI = {
     return data;
   },
 
-  getById: async (id: number): Promise<Category> => {
+  getById: async (id: string): Promise<Category> => {
     const { data } = await api.get(`/categories/${id}`);
     return data;
   },
 
-  getProducts: async (id: number): Promise<Product[]> => {
+  getProducts: async (id: string): Promise<Product[]> => {
     const { data } = await api.get(`/categories/${id}/products`);
     return data;
   },
@@ -134,7 +134,7 @@ export const cartAPI = {
     return data;
   },
 
-  addItem: async (productId: number, quantity: number): Promise<Cart> => {
+  addItem: async (productId: string, quantity: number): Promise<Cart> => {
     const { data } = await api.post('/cart/items', {
       product_id: productId,
       quantity,
@@ -142,12 +142,12 @@ export const cartAPI = {
     return data;
   },
 
-  updateItem: async (itemId: number, quantity: number): Promise<Cart> => {
+  updateItem: async (itemId: string, quantity: number): Promise<Cart> => {
     const { data } = await api.put(`/cart/items/${itemId}`, { quantity });
     return data;
   },
 
-  removeItem: async (itemId: number): Promise<void> => {
+  removeItem: async (itemId: string): Promise<void> => {
     await api.delete(`/cart/items/${itemId}`);
   },
 
@@ -163,7 +163,7 @@ export const ordersAPI = {
     return data;
   },
 
-  getById: async (id: number): Promise<Order> => {
+  getById: async (id: string): Promise<Order> => {
     const { data } = await api.get(`/orders/${id}`);
     return data;
   },
@@ -176,7 +176,7 @@ export const ordersAPI = {
     return data;
   },
 
-  cancel: async (id: number): Promise<Order> => {
+  cancel: async (id: string): Promise<Order> => {
     const { data } = await api.post(`/orders/${id}/cancel`);
     return data;
   },
@@ -184,12 +184,12 @@ export const ordersAPI = {
 
 // Payments API
 export const paymentsAPI = {
-  createPaymentIntent: async (orderId: number): Promise<Payment> => {
+  createPaymentIntent: async (orderId: string): Promise<Payment> => {
     const { data } = await api.post('/payments/intent', { order_id: orderId });
     return data;
   },
 
-  confirmPayment: async (paymentId: number): Promise<Payment> => {
+  confirmPayment: async (paymentId: string): Promise<Payment> => {
     const { data } = await api.post(`/payments/${paymentId}/confirm`);
     return data;
   },
@@ -214,12 +214,12 @@ export const adminAPI = {
     return data;
   },
 
-  updateProduct: async (id: number, productData: any): Promise<Product> => {
+  updateProduct: async (id: string, productData: any): Promise<Product> => {
     const { data } = await api.put(`/admin/products/${id}`, productData);
     return data;
   },
 
-  deleteProduct: async (id: number): Promise<void> => {
+  deleteProduct: async (id: string): Promise<void> => {
     await api.delete(`/admin/products/${id}`);
   },
 
@@ -229,7 +229,7 @@ export const adminAPI = {
     return data;
   },
 
-  updateOrderStatus: async (id: number, status: OrderStatus): Promise<Order> => {
+  updateOrderStatus: async (id: string, status: OrderStatus): Promise<Order> => {
     const { data } = await api.put(`/admin/orders/${id}/status`, { status });
     return data;
   },
@@ -240,21 +240,21 @@ export const adminAPI = {
     return data;
   },
 
-  updateUserRole: async (id: number, role: string): Promise<User> => {
+  updateUserRole: async (id: string, role: string): Promise<User> => {
     const { data } = await api.put(`/admin/users/${id}/role`, { role });
     return data;
   },
 
   // Analytics
   getSalesData: async (startDate?: string, endDate?: string): Promise<any> => {
-    const { data } = await api.get('/admin/analytics/sales', {
-      params: { start_date: startDate, end_date: endDate },
+    const { data } = await api.get('/admin/analytics', {
+      params: { startDate, endDate },
     });
     return data;
   },
 
   getTopProducts: async (): Promise<any> => {
-    const { data } = await api.get('/admin/analytics/top-products');
+    const { data } = await api.get('/admin/products/top');
     return data;
   },
 

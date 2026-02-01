@@ -69,6 +69,7 @@ export const register = async (
         first_name: user.firstName,
         last_name: user.lastName,
         role: user.role,
+        is_active: false, // User needs to verify email
       },
       access: accessToken,
       refresh: refreshToken,
@@ -117,6 +118,7 @@ export const login = async (
         first_name: user.firstName,
         last_name: user.lastName,
         role: user.role,
+        is_active: user.isVerified,
       },
       access: accessToken,
       refresh: refreshToken,
@@ -283,8 +285,8 @@ export const getProfile = async (
       first_name: user.firstName,
       last_name: user.lastName,
       role: user.role,
-      is_verified: user.isVerified,
-      created_at: user.createdAt,
+      is_active: user.isVerified,
+      date_joined: user.createdAt,
     });
   } catch (error) {
     next(error);

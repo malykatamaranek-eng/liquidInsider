@@ -22,16 +22,17 @@ export interface RegisterRequest {
 }
 
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   description: string;
   image?: string;
   slug: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -46,7 +47,7 @@ export interface Product {
 }
 
 export interface ProductFilters {
-  category?: number;
+  category?: string;
   min_price?: number;
   max_price?: number;
   search?: string;
@@ -55,7 +56,7 @@ export interface ProductFilters {
 }
 
 export interface CartItem {
-  id: number;
+  id: string;
   product: Product;
   quantity: number;
   price: number;
@@ -63,8 +64,8 @@ export interface CartItem {
 }
 
 export interface Cart {
-  id: number;
-  user: number;
+  id: string;
+  user: string;
   items: CartItem[];
   total: number;
   created_at: string;
@@ -72,22 +73,28 @@ export interface Cart {
 }
 
 export interface OrderItem {
-  id: number;
-  product: Product;
+  id: string;
+  product_id: string;
+  product?: Product;
   quantity: number;
   price: number;
-  subtotal: number;
+  subtotal?: number;
 }
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 export interface Order {
-  id: number;
-  user: User;
+  id: string;
+  user_id: string;
+  user: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
   items: OrderItem[];
   total: number;
   status: OrderStatus;
-  shipping_address: string;
+  shipping_address?: string;
   tracking_number?: string;
   created_at: string;
   updated_at: string;
@@ -96,8 +103,8 @@ export interface Order {
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
 export interface Payment {
-  id: number;
-  order: number;
+  id: string;
+  order: string;
   amount: number;
   status: PaymentStatus;
   payment_method: string;

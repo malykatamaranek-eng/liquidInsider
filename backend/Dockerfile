@@ -1,7 +1,10 @@
 FROM node:18-slim
 
-# Install OpenSSL explicitly for Prisma (node:18-slim requires explicit installation)
-# Install curl for health checks
+<<<<<<< copilot/add-curl-to-dockerfile
+# Install OpenSSL for Prisma and curl for health checks (node:18-slim requires explicit installation)
+=======
+
+>>>>>>> main
 RUN apt-get update -y && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

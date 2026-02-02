@@ -19,6 +19,7 @@ import { Role } from '@prisma/client';
 const router = Router();
 
 router.get('/', getProducts);
+router.get('/search', getProducts); // Search uses same logic as getProducts with query params
 router.get('/featured', getFeaturedProducts);
 router.get('/:id', getProduct);
 router.post('/', authenticate, authorize(Role.ADMIN), validate(createProductSchema), createProduct);

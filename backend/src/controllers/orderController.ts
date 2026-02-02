@@ -322,6 +322,87 @@ export const updateOrderStatus = async (
   }
 };
 
+export const cancelOrder = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new AppError('Not authenticated', 401);
+    }
+
+    const { id } = req.params;
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new AppError('Order not found', 404);
+    }
+
+    // Check if user owns the order or is admin
+    if (req.user.role !== 'ADMIN' && order.userId !== req.user.id) {
+      throw new AppError('Unauthorized', 403);
+    }
+
+    // Can only cancel pending or processing orders
+    if (!['PENDING', 'PROCESSING'].includes(order.status)) {
+      throw new AppError('Cannot cancel order with current status', 400);
+    }
+
+    // Update order status and restore inventory
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+      const cancelled = await tx.order.update({
+        where: { id },
+        data: { status: OrderStatus.CANCELLED },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  images: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Restore inventory
+      await Promise.all(
+        order.items.map((item) =>
+          tx.product.update({
+            where: { id: item.productId },
+            data: {
+              inventory: {
+                increment: item.quantity,
+              },
+            },
+          })
+        )
+      );
+
+      return cancelled;
+    });
+
+    res.json(updatedOrder);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getUserOrders = async (
   req: AuthRequest,
   res: Response,

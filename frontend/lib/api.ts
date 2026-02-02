@@ -95,7 +95,8 @@ export const authAPI = {
 export const productsAPI = {
   getAll: async (filters?: ProductFilters): Promise<Product[]> => {
     const { data } = await api.get('/products', { params: filters });
-    return data;
+    // Backend returns { products: [], pagination: {} }, extract products array
+    return data.products || data;
   },
 
   getById: async (id: string): Promise<Product> => {

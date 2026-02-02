@@ -10,7 +10,7 @@ import Loading from '@/components/Loading';
 import { useAuth } from '@/lib/context/AuthContext';
 import { ordersAPI } from '@/lib/api';
 import type { Order } from '@/lib/types';
-import { User, Package, MapPin, Heart, LogOut, ShoppingBag } from 'lucide-react';
+import { User, Package, MapPin, Heart, LogOut, ShoppingBag, Settings } from 'lucide-react';
 
 type Tab = 'profile' | 'orders' | 'wishlist' | 'addresses';
 
@@ -176,6 +176,15 @@ export default function AccountPage() {
                       <p className="text-lg">
                         {new Date(user.date_joined).toLocaleDateString()}
                       </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <Link href="/account/settings">
+                        <Button className="w-full">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Edit Profile
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>

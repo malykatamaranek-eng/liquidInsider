@@ -105,7 +105,7 @@ export default function SettingsPage() {
       }
       
       toast.success('Profile updated successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ export default function SettingsPage() {
       });
       
       toast.success('Password updated successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update password. Check your current password.');
     } finally {
       setLoading(false);

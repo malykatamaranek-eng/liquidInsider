@@ -5,20 +5,21 @@ services:
     image: postgres:15-alpine
     container_name: liquidinsider_postgres
     environment:
-      POSTGRES_USER: liquidinsider
-      POSTGRES_PASSWORD: liquidinsider
-      POSTGRES_DB: liquidinsider
+      POSTGRES_USER: ${DB_USER:-liquidinsider}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-liquidinsider}
+      POSTGRES_DB: ${DB_NAME:-liquidinsider}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U liquidinsider"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-liquidinsider}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - liquidinsider_network
+      - liquidinsider
+    restart: unless-stopped
 
   backend:
     build:
@@ -29,47 +30,57 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://liquidinsider:liquidinsider@postgres:5432/liquidinsider"
-      JWT_SECRET: "${JWT_SECRET:-your-secret-key-min-32-characters-long-change-this}"
-      JWT_REFRESH_SECRET: "${JWT_REFRESH_SECRET:-your-refresh-secret-key-change-this}"
-      JWT_EXPIRES_IN: "15m"
-      JWT_REFRESH_EXPIRES_IN: "7d"
-      PORT: "3001"
-      FRONTEND_URL: "http://localhost:3000"
-      NODE_ENV: "development"
-      STORE_NAME: "LiquidInsider"
-      STORE_EMAIL: "admin@liquidinsider.com"
-      STORE_PHONE: "+1234567890"
-      SMTP_HOST: ""
-      SMTP_PORT: "587"
-      SMTP_USER: ""
-      SMTP_PASSWORD: ""
-      FROM_EMAIL: "noreply@liquidinsider.com"
+      DATABASE_URL: "postgresql://${DB_USER:-liquidinsider}:${DB_PASSWORD:-liquidinsider}@postgres:5432/${DB_NAME:-liquidinsider}"
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-min-32-characters-long-change-this}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your-refresh-secret-key-change-this}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      PORT: ${BACKEND_PORT:-3001}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      NODE_ENV: ${NODE_ENV:-development}
+      STORE_NAME: ${STORE_NAME:-LiquidInsider}
+      STORE_EMAIL: ${STORE_EMAIL:-admin@liquidinsider.com}
+      STORE_PHONE: ${STORE_PHONE:-+1234567890}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@liquidinsider.com}
+      UPLOAD_DIR: ${UPLOAD_DIR:-./uploads/products}
+      MAX_IMAGE_SIZE: ${MAX_IMAGE_SIZE:-5242880}
     ports:
-      - "3001:3001"
+      - "${BACKEND_PORT:-3001}:3001"
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - ./backend/uploads:/app/uploads
     command: >
       sh -c "
+        echo '========================================' &&
+        echo 'LiquidInsider Backend Starting' &&
+        echo '========================================' &&
         echo 'Waiting for database connection...' &&
-        until nc -z postgres 5432; do
-          echo 'Database not ready yet, waiting...' &&
-          sleep 2
-        done &&
-        sleep 5 &&
-        echo 'Database is ready!' &&
+        sleep 15 &&
+        echo 'Database connection established!' &&
         echo 'Running Prisma migrations...' &&
         npx prisma migrate deploy &&
         echo 'Generating Prisma client...' &&
         npx prisma generate &&
         echo 'Seeding database...' &&
         npm run seed &&
+        echo 'Database seeding complete!' &&
         echo 'Starting backend server...' &&
         npm run dev
       "
     networks:
-      - liquidinsider_network
+      - liquidinsider
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   frontend:
     build:
@@ -79,18 +90,22 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:3001/api"
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - /app/.next
     networks:
-      - liquidinsider_network
+      - liquidinsider
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
 
 networks:
-  liquidinsider_network:
+  liquidinsider:
     driver: bridge

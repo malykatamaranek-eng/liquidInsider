@@ -62,8 +62,8 @@ services:
         echo 'Waiting for database connection...' &&
         sleep 15 &&
         echo 'Database connection established!' &&
-        echo 'Running Prisma migrations...' &&
-        npx prisma migrate deploy &&
+        echo 'Syncing database schema...' &&
+        npx prisma db push --accept-data-loss &&
         echo 'Generating Prisma client...' &&
         npx prisma generate &&
         echo 'Seeding database...' &&

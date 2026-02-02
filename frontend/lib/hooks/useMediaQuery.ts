@@ -30,16 +30,9 @@ export function useMediaQuery(query: string): boolean {
       setMatches(e.matches);
     };
 
-    // Modern browsers
-    if (media.addEventListener) {
-      media.addEventListener('change', listener);
-      return () => media.removeEventListener('change', listener);
-    }
-    // Fallback for older browsers
-    else {
-      media.addListener(listener);
-      return () => media.removeListener(listener);
-    }
+    // All modern browsers support addEventListener
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
   }, [query]);
 
   return matches;

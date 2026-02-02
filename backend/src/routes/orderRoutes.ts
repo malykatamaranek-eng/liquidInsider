@@ -2,8 +2,8 @@ import { Router } from 'express';
 import {
   createOrder,
   getOrders,
-  getOrdersByUserId,
-  getOrderById,
+  getUserOrders,
+  getOrder,
   updateOrderStatus,
 } from '../controllers/orderController';
 import { authenticate } from '../middleware/authenticate';
@@ -19,8 +19,8 @@ const router = Router();
 
 router.post('/', authenticate, validate(createOrderSchema), createOrder);
 router.get('/', authenticate, getOrders);
-router.get('/user/:userId', authenticate, authorize(Role.ADMIN), getOrdersByUserId);
-router.get('/:id', authenticate, getOrderById);
+router.get('/user/:userId', authenticate, authorize(Role.ADMIN), getUserOrders);
+router.get('/:id', authenticate, getOrder);
 router.put('/:id/status', authenticate, authorize(Role.ADMIN), validate(updateOrderStatusSchema), updateOrderStatus);
 
 export default router;

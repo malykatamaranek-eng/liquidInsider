@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getCategories,
-  getCategoryById,
+  getCategory,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -18,7 +18,7 @@ import { Role } from '@prisma/client';
 const router = Router();
 
 router.get('/', getCategories);
-router.get('/:id', getCategoryById);
+router.get('/:id', getCategory);
 router.post('/', authenticate, authorize(Role.ADMIN), validate(createCategorySchema), createCategory);
 router.put('/:id', authenticate, authorize(Role.ADMIN), validate(updateCategorySchema), updateCategory);
 router.delete('/:id', authenticate, authorize(Role.ADMIN), deleteCategory);

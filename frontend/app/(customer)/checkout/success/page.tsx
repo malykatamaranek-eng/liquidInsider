@@ -87,7 +87,7 @@ export default function CheckoutSuccessPage() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Total Amount:</span>
                     <span className="font-semibold text-blue-600">
-                      ${order.total.toFixed(2)}
+                      ${Number(order.total).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -119,7 +119,7 @@ export default function CheckoutSuccessPage() {
                             <p className="text-gray-600 text-xs">Qty: {item.quantity}</p>
                           </div>
                         </div>
-                        <span className="font-semibold">${item.subtotal.toFixed(2)}</span>
+                        <span className="font-semibold">${Number(item.subtotal).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>

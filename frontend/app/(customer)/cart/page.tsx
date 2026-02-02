@@ -111,7 +111,7 @@ export default function CartPage() {
                           {item.product.category.name}
                         </p>
                         <p className="text-lg font-bold text-blue-600">
-                          ${item.price.toFixed(2)}
+                          ${Number(item.price).toFixed(2)}
                         </p>
                       </div>
 
@@ -146,7 +146,7 @@ export default function CartPage() {
                         </div>
 
                         <p className="text-sm font-semibold">
-                          Subtotal: ${item.subtotal.toFixed(2)}
+                          Subtotal: ${Number(item.subtotal).toFixed(2)}
                         </p>
                       </div>
                     </div>

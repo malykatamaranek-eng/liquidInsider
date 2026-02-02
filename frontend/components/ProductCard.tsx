@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="mt-4 flex items-center justify-between">
           <div>
             <span className="text-2xl font-bold text-gray-900">
-              ${product.price.toFixed(2)}
+              ${Number(product.price).toFixed(2)}
             </span>
             {inStock && (
               <div className="flex items-center mt-1 text-sm text-gray-500">

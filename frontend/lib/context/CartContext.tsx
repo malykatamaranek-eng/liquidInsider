@@ -131,7 +131,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const getCartTotal = (): number => {
-    return cart?.total || 0;
+    return Number(cart?.total) || 0;
   };
 
   const getItemCount = (): number => {

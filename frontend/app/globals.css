@@ -37,6 +37,16 @@
     animation: fadeIn 0.6s ease-in 0.3s both;
   }
 
+  /* Touch-friendly tap targets */
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  /* Container queries support */
+  .container-query {
+    container-type: inline-size;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -68,3 +78,73 @@
     }
   }
 }
+
+/* Print styles for orders and checkout */
+@media print {
+  /* Hide navigation and non-essential elements */
+  nav,
+  footer,
+  .no-print,
+  button:not(.print-button) {
+    display: none !important;
+  }
+
+  /* Optimize page layout for printing */
+  body {
+    @apply bg-white text-black;
+  }
+
+  /* Ensure content fits on page */
+  .print-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  /* Print-friendly tables */
+  table {
+    page-break-inside: avoid;
+  }
+
+  /* Avoid page breaks in important sections */
+  .order-summary,
+  .checkout-details {
+    page-break-inside: avoid;
+  }
+
+  /* Show links URLs in print */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Remove link underlines for cleaner print */
+  a {
+    text-decoration: none;
+  }
+}
+
+/* Responsive typography improvements */
+@media (min-width: 1280px) {
+  /* XL screens */
+  .hero-text {
+    @apply text-7xl;
+  }
+
+  .container-xl {
+    @apply max-w-screen-xl;
+  }
+}
+
+@media (min-width: 1536px) {
+  /* 2XL screens */
+  .hero-text {
+    @apply text-8xl;
+  }
+
+  .container-2xl {
+    @apply max-w-screen-2xl;
+  }
+}
+

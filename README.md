@@ -178,7 +178,11 @@ docker-compose exec backend npx prisma migrate dev
 docker-compose exec backend npm run seed
 ```
 
-For detailed Docker setup and troubleshooting, see [DOCKER_SETUP.md](./DOCKER_SETUP.md)
+### Troubleshooting Docker
+
+**Port already in use**: Stop the conflicting service or change ports in `.env`
+**Can't connect to database**: Wait 2-3 minutes after startup, check logs with `docker-compose logs postgres`
+**Services won't start**: Ensure you're in the project root directory with `docker-compose.yml`
 
 ### Manual Setup
 

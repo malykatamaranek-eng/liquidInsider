@@ -1,28 +1,25 @@
 import * as nodemailer from 'nodemailer';
 import logger from './logger';
 
-// Check if email is configured
-const isEmailConfigured = (): boolean => {
-  return !!(
-    process.env.SMTP_HOST &&
-    process.env.SMTP_USER &&
-    process.env.SMTP_PASSWORD
-  );
-};
-
-// Create transporter only if configured
+// Create transporter with fallback when SMTP not configured
 const createTransporter = () => {
-  if (!isEmailConfigured()) {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPassword = process.env.SMTP_PASSWORD;
+
+  // If SMTP not configured, return null (graceful degradation)
+  if (!smtpHost || !smtpUser || !smtpPassword) {
+    logger.warn('SMTP not configured - email notifications disabled');
     return null;
   }
 
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587'),
+    host: smtpHost,
+    port: parseInt(process.env.SMTP_PORT || '587', 10),
     secure: process.env.SMTP_SECURE === 'true',
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+      user: smtpUser,
+      pass: smtpPassword,
     },
   });
 };
@@ -31,35 +28,30 @@ export const sendVerificationEmail = async (
   email: string,
   token: string
 ): Promise<void> => {
+  const transporter = createTransporter();
+  
+  if (!transporter) {
+    logger.info(`[MOCK] Verification email would be sent to ${email} with token ${token}`);
+    return;
+  }
+
   try {
-    if (!isEmailConfigured()) {
-      logger.warn('Email not configured, skipping verification email');
-      return;
-    }
-
-    const transporter = createTransporter();
-    if (!transporter) {
-      return;
-    }
-
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
-
     await transporter.sendMail({
       from: process.env.FROM_EMAIL || 'noreply@liquidinsider.com',
       to: email,
-      subject: 'Verify your LiquidInsider email',
+      subject: 'Verify your email - LiquidInsider',
       html: `
-        <h2>Verify your email</h2>
-        <p>Click the link below to verify your email address:</p>
-        <a href="${verificationUrl}">Verify Email</a>
-        <p>Or copy this link: ${verificationUrl}</p>
+        <h1>Verify your email</h1>
+        <p>Please click the link below to verify your email:</p>
+        <a href="${process.env.FRONTEND_URL}/verify-email?token=${token}">
+          Verify Email
+        </a>
       `,
     });
-
     logger.info(`Verification email sent to ${email}`);
   } catch (error) {
     logger.error('Error sending verification email:', error);
-    // Don't throw - allow app to continue even if email fails
+    // Don't throw - let registration continue
   }
 };
 
@@ -67,71 +59,62 @@ export const sendPasswordResetEmail = async (
   email: string,
   token: string
 ): Promise<void> => {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    logger.info(`[MOCK] Password reset email would be sent to ${email} with token ${token}`);
+    return;
+  }
+
   try {
-    if (!isEmailConfigured()) {
-      logger.warn('Email not configured, skipping password reset email');
-      return;
-    }
-
-    const transporter = createTransporter();
-    if (!transporter) {
-      return;
-    }
-
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
     await transporter.sendMail({
       from: process.env.FROM_EMAIL || 'noreply@liquidinsider.com',
       to: email,
-      subject: 'Reset your LiquidInsider password',
+      subject: 'Reset your password - LiquidInsider',
       html: `
-        <h2>Reset your password</h2>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetUrl}">Reset Password</a>
-        <p>Or copy this link: ${resetUrl}</p>
-        <p>This link expires in 24 hours.</p>
+        <h1>Reset your password</h1>
+        <p>Please click the link below to reset your password:</p>
+        <a href="${process.env.FRONTEND_URL}/reset-password?token=${token}">
+          Reset Password
+        </a>
       `,
     });
-
     logger.info(`Password reset email sent to ${email}`);
   } catch (error) {
     logger.error('Error sending password reset email:', error);
-    // Don't throw - allow app to continue even if email fails
+    // Don't throw - let password reset continue
   }
 };
 
 export const sendOrderConfirmationEmail = async (
   email: string,
-  orderId: string,
-  total: number
+  orderId: string
 ): Promise<void> => {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    logger.info(`[MOCK] Order confirmation email would be sent to ${email} for order ${orderId}`);
+    return;
+  }
+
   try {
-    if (!isEmailConfigured()) {
-      logger.warn('Email not configured, skipping order confirmation email');
-      return;
-    }
-
-    const transporter = createTransporter();
-    if (!transporter) {
-      return;
-    }
-
     await transporter.sendMail({
       from: process.env.FROM_EMAIL || 'noreply@liquidinsider.com',
       to: email,
-      subject: `Order Confirmation - ${orderId}`,
+      subject: `Order Confirmation - Order #${orderId}`,
       html: `
-        <h2>Order Confirmation</h2>
+        <h1>Order Confirmed</h1>
         <p>Thank you for your order!</p>
-        <p>Order ID: ${orderId}</p>
-        <p>Total: $${total.toFixed(2)}</p>
-        <p>You can track your order in your account dashboard.</p>
+        <p>Your order number is: ${orderId}</p>
+        <p>You can track your order at:</p>
+        <a href="${process.env.FRONTEND_URL}/orders/${orderId}">
+          View Order
+        </a>
       `,
     });
-
     logger.info(`Order confirmation email sent to ${email}`);
   } catch (error) {
     logger.error('Error sending order confirmation email:', error);
-    // Don't throw - allow app to continue even if email fails
+    // Don't throw - order is already created
   }
 };

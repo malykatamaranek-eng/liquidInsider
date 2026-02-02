@@ -20,6 +20,7 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
 
 # Debug
 npm-debug.log*
@@ -44,3 +45,6 @@ uploads/
 # Logs
 logs/
 *.log
+
+# Docker
+docker-compose.override.yml

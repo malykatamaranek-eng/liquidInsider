@@ -98,32 +98,87 @@ liquidInsider/
 
 ## Getting Started
 
-### Quick Start with Docker (Recommended)
+## 🚀 Quick Start with Docker (Recommended)
 
-The fastest way to get started:
+The fastest way to get started with LiquidInsider:
 
-```bash
-# Clone the repository
-git clone https://github.com/malykatamaranek-eng/liquidInsider.git
-cd liquidInsider
+### Prerequisites
+- Docker & Docker Compose installed
+- Git
 
-# Copy environment variables
-cp .env.example .env
+### Installation & Setup
 
-# Start all services (PostgreSQL, Backend, Frontend)
-docker-compose up -d --build
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/malykatamaranek-eng/liquidInsider.git
+   cd liquidInsider
+   ```
 
-# Wait 2-3 minutes for initialization, then visit:
-# - Frontend: http://localhost:3000
-# - Backend API: http://localhost:3001/api
-# - Admin Panel: http://localhost:3000/admin
+2. **Create environment file**
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Start all services**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. **Wait for services to start (~2-3 minutes)**
+   ```bash
+   docker-compose ps
+   # All containers should show "Up"
+   ```
+
+5. **Check if database seeding completed**
+   ```bash
+   docker-compose logs backend | grep "Database seed completed"
+   ```
+
+### Access the Application
+
+- **Frontend**: http://localhost:3000
+- **Admin Panel**: http://localhost:3000/admin
+- **Backend API**: http://localhost:3001/api
+- **API Docs**: http://localhost:3001/api-docs
+
+### Default Admin Credentials
+
+```
+Email: admin@liquidinsider.com
+Password: admin123
 ```
 
-**Login credentials:**
-- Email: `admin@liquidinsider.com`
-- Password: `admin123`
+**⚠️ IMPORTANT: Change admin password in production!**
 
-For detailed Docker setup, see [DOCKER_SETUP.md](./DOCKER_SETUP.md)
+### Useful Docker Commands
+
+```bash
+# View logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
+docker-compose logs -f postgres
+
+# Stop services
+docker-compose down
+
+# Reset everything (⚠️ deletes database)
+docker-compose down -v
+
+# Rebuild images
+docker-compose build --no-cache
+
+# Access database
+docker-compose exec postgres psql -U liquidinsider -d liquidinsider
+
+# Run migrations manually
+docker-compose exec backend npx prisma migrate dev
+
+# Seed database manually
+docker-compose exec backend npm run seed
+```
+
+For detailed Docker setup and troubleshooting, see [DOCKER_SETUP.md](./DOCKER_SETUP.md)
 
 ### Manual Setup
 

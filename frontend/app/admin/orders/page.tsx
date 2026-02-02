@@ -132,7 +132,7 @@ export default function OrdersPage() {
                       <div className="text-xs text-gray-500">{order.user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${order.total.toFixed(2)}
+                      ${Number(order.total).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span

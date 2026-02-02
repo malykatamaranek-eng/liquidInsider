@@ -311,7 +311,7 @@ export default function CheckoutPage() {
                             <p className="font-semibold">{item.product.name}</p>
                             <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                           </div>
-                          <p className="font-semibold">${item.subtotal.toFixed(2)}</p>
+                          <p className="font-semibold">${Number(item.subtotal).toFixed(2)}</p>
                         </div>
                       ))}
                     </div>

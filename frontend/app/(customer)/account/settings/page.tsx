@@ -100,13 +100,13 @@ export default function SettingsPage() {
         email: profileData.email,
       });
       
-      if (setUser) {
-        setUser(data);
-      }
+      setUser(data);
       
       toast.success('Profile updated successfully!');
-    } catch {
-      toast.error('Failed to update profile. Please try again.');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 
+                           'Failed to update profile. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -133,8 +133,10 @@ export default function SettingsPage() {
       });
       
       toast.success('Password updated successfully!');
-    } catch {
-      toast.error('Failed to update password. Check your current password.');
+    } catch (err: unknown) {
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 
+                           'Failed to update password. Please check your current password.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

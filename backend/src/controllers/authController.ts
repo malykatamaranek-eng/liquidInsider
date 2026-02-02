@@ -297,6 +297,27 @@ export const getProfile = async (
   }
 };
 
+export const logout = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    // In a stateless JWT system, logout is handled client-side by removing tokens
+    // However, we can still provide a logout endpoint for consistency
+    // 
+    // Future enhancements to consider:
+    // - Implement token blacklisting using Redis or database
+    // - Add refresh token revocation to prevent token reuse
+    // - Track logout events for security auditing
+    // - Implement session management for additional security
+    
+    res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateProfile = async (
   req: AuthRequest,
   res: Response,

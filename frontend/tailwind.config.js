@@ -24,6 +24,7 @@ module.exports = {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.5s ease-out',
+        'slide-down': 'slideDown 0.5s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -33,6 +34,31 @@ module.exports = {
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      // Enhanced breakpoints for better responsiveness
+      screens: {
+        'xs': '475px',
+        '3xl': '1920px',
+      },
+      // Touch-friendly spacing
+      spacing: {
+        'touch': '48px', // Minimum touch target size
+      },
+      // Container padding
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: '1rem',
+          sm: '1.5rem',
+          md: '2rem',
+          lg: '2.5rem',
+          xl: '3rem',
+          '2xl': '4rem',
         },
       },
     },

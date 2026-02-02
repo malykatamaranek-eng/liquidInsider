@@ -5,6 +5,7 @@ import {
   getUserOrders,
   getOrder,
   updateOrderStatus,
+  cancelOrder,
 } from '../controllers/orderController';
 import { authenticate } from '../middleware/authenticate';
 import { authorize } from '../middleware/authorize';
@@ -21,6 +22,7 @@ router.post('/', authenticate, validate(createOrderSchema), createOrder);
 router.get('/', authenticate, getOrders);
 router.get('/user/:userId', authenticate, authorize(Role.ADMIN), getUserOrders);
 router.get('/:id', authenticate, getOrder);
+router.post('/:id/cancel', authenticate, cancelOrder);
 router.put('/:id/status', authenticate, authorize(Role.ADMIN), validate(updateOrderStatusSchema), updateOrderStatus);
 
 export default router;

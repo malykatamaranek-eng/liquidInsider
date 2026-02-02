@@ -3,10 +3,10 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: liquidinsider-db
+    container_name: liquidinsider_postgres
     environment:
       POSTGRES_USER: liquidinsider
-      POSTGRES_PASSWORD: liquidinsider123
+      POSTGRES_PASSWORD: liquidinsider
       POSTGRES_DB: liquidinsider
     ports:
       - "5432:5432"
@@ -17,41 +17,80 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - liquidinsider_network
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: liquidinsider-backend
+    container_name: liquidinsider_backend
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://liquidinsider:liquidinsider123@postgres:5432/liquidinsider"
-      NODE_ENV: development
+      DATABASE_URL: "postgresql://liquidinsider:liquidinsider@postgres:5432/liquidinsider"
+      JWT_SECRET: "${JWT_SECRET:-your-secret-key-min-32-characters-long-change-this}"
+      JWT_REFRESH_SECRET: "${JWT_REFRESH_SECRET:-your-refresh-secret-key-change-this}"
+      JWT_EXPIRES_IN: "15m"
+      JWT_REFRESH_EXPIRES_IN: "7d"
+      PORT: "3001"
+      FRONTEND_URL: "http://localhost:3000"
+      NODE_ENV: "development"
+      STORE_NAME: "LiquidInsider"
+      STORE_EMAIL: "admin@liquidinsider.com"
+      STORE_PHONE: "+1234567890"
+      SMTP_HOST: ""
+      SMTP_PORT: "587"
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+      FROM_EMAIL: "noreply@liquidinsider.com"
     ports:
       - "3001:3001"
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: npm run dev
+    command: >
+      sh -c "
+        echo 'Waiting for database connection...' &&
+        until nc -z postgres 5432; do
+          echo 'Database not ready yet, waiting...' &&
+          sleep 2
+        done &&
+        sleep 5 &&
+        echo 'Database is ready!' &&
+        echo 'Running Prisma migrations...' &&
+        npx prisma migrate deploy &&
+        echo 'Generating Prisma client...' &&
+        npx prisma generate &&
+        echo 'Seeding database...' &&
+        npm run seed &&
+        echo 'Starting backend server...' &&
+        npm run dev
+      "
+    networks:
+      - liquidinsider_network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: liquidinsider-frontend
+    container_name: liquidinsider_frontend
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:3001"
+      NEXT_PUBLIC_API_URL: "http://localhost:3001/api"
     ports:
       - "3000:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - /app/.next
-    command: npm run dev
+    networks:
+      - liquidinsider_network
 
 volumes:
   postgres_data:
+
+networks:
+  liquidinsider_network:
+    driver: bridge

@@ -1,3 +1,6 @@
+# Docker Compose configuration for LiquidInsider development environment
+# NOTE: This configuration uses `prisma db push --accept-data-loss` which is suitable for development only.
+# For production deployments, use proper Prisma migrations with `prisma migrate deploy`.
 version: '3.8'
 
 services:
@@ -62,7 +65,7 @@ services:
         echo 'Waiting for database connection...' &&
         sleep 15 &&
         echo 'Database connection established!' &&
-        echo 'Syncing database schema...' &&
+        echo 'Syncing database schema (development mode)...' &&
         npx prisma db push --accept-data-loss &&
         echo 'Generating Prisma client...' &&
         npx prisma generate &&

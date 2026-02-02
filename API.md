@@ -77,6 +77,22 @@ Authenticate a user.
 
 ---
 
+### Logout
+**POST** `/auth/logout`
+
+🔒 **Requires Authentication**
+
+Log out the current user. Note: In a stateless JWT system, logout is primarily handled client-side by removing tokens.
+
+**Response:** `200 OK`
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+---
+
 ### Refresh Token
 **POST** `/auth/refresh`
 
@@ -226,6 +242,23 @@ Get all products with optional filters.
 **GET** `/products/featured`
 
 Get featured products.
+
+**Response:** `200 OK` (Same structure as Get Products)
+
+---
+
+### Search Products
+**GET** `/products/search`
+
+Search for products using query parameters. Uses the same filtering logic as Get Products.
+
+**Query Parameters:**
+- `search` (string): Search query for product name/description
+- `categoryId` (string): Filter by category
+- `minPrice` (number): Minimum price
+- `maxPrice` (number): Maximum price
+- `page` (number): Page number
+- `limit` (number): Items per page
 
 **Response:** `200 OK` (Same structure as Get Products)
 
@@ -526,6 +559,30 @@ Get single order details.
 
 ---
 
+### Cancel Order
+**POST** `/orders/:id/cancel`
+
+🔒 **Requires Authentication**
+
+Cancel an order. Only orders with status PENDING or PROCESSING can be cancelled. Restores inventory for all items.
+
+**Response:** `200 OK`
+```json
+{
+  "id": "uuid",
+  "orderNumber": "ORD-ABC123",
+  "userId": "uuid",
+  "status": "CANCELLED",
+  "subtotal": 9.98,
+  "tax": 0.80,
+  "shippingCost": 5.99,
+  "total": 16.77,
+  "items": [...]
+}
+```
+
+---
+
 ### Update Order Status
 **PUT** `/orders/:id/status`
 
@@ -547,11 +604,11 @@ Update order status.
 ## Payment Endpoints
 
 ### Create Payment Intent
-**POST** `/payments/create-intent`
+**POST** `/payments/create-intent` or **POST** `/payments/intent`
 
 🔒 **Requires Authentication**
 
-Create Stripe payment intent for checkout.
+Create Stripe payment intent for checkout. Both endpoints work identically.
 
 **Request Body:**
 ```json

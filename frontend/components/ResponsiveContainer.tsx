@@ -10,6 +10,7 @@ interface ResponsiveContainerProps {
   padding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
+// Predefined classes that Tailwind can detect
 const maxWidthClasses = {
   sm: 'max-w-screen-sm',
   md: 'max-w-screen-md',
@@ -72,6 +73,46 @@ const gapClasses = {
   xl: 'gap-8',
 };
 
+// Predefined grid column classes for Tailwind purge
+const gridColClasses: Record<string, string> = {
+  '1': 'grid-cols-1',
+  '2': 'grid-cols-2',
+  '3': 'grid-cols-3',
+  '4': 'grid-cols-4',
+  '5': 'grid-cols-5',
+  '6': 'grid-cols-6',
+  'sm-1': 'sm:grid-cols-1',
+  'sm-2': 'sm:grid-cols-2',
+  'sm-3': 'sm:grid-cols-3',
+  'sm-4': 'sm:grid-cols-4',
+  'sm-5': 'sm:grid-cols-5',
+  'sm-6': 'sm:grid-cols-6',
+  'md-1': 'md:grid-cols-1',
+  'md-2': 'md:grid-cols-2',
+  'md-3': 'md:grid-cols-3',
+  'md-4': 'md:grid-cols-4',
+  'md-5': 'md:grid-cols-5',
+  'md-6': 'md:grid-cols-6',
+  'lg-1': 'lg:grid-cols-1',
+  'lg-2': 'lg:grid-cols-2',
+  'lg-3': 'lg:grid-cols-3',
+  'lg-4': 'lg:grid-cols-4',
+  'lg-5': 'lg:grid-cols-5',
+  'lg-6': 'lg:grid-cols-6',
+  'xl-1': 'xl:grid-cols-1',
+  'xl-2': 'xl:grid-cols-2',
+  'xl-3': 'xl:grid-cols-3',
+  'xl-4': 'xl:grid-cols-4',
+  'xl-5': 'xl:grid-cols-5',
+  'xl-6': 'xl:grid-cols-6',
+  '2xl-1': '2xl:grid-cols-1',
+  '2xl-2': '2xl:grid-cols-2',
+  '2xl-3': '2xl:grid-cols-3',
+  '2xl-4': '2xl:grid-cols-4',
+  '2xl-5': '2xl:grid-cols-5',
+  '2xl-6': '2xl:grid-cols-6',
+};
+
 /**
  * Responsive Grid Component
  * Provides a flexible grid system with responsive column counts
@@ -83,12 +124,12 @@ export function ResponsiveGrid({
   gap = 'md',
 }: ResponsiveGridProps) {
   const gridCols = [
-    cols.default && `grid-cols-${cols.default}`,
-    cols.sm && `sm:grid-cols-${cols.sm}`,
-    cols.md && `md:grid-cols-${cols.md}`,
-    cols.lg && `lg:grid-cols-${cols.lg}`,
-    cols.xl && `xl:grid-cols-${cols.xl}`,
-    cols['2xl'] && `2xl:grid-cols-${cols['2xl']}`,
+    cols.default && gridColClasses[String(cols.default)],
+    cols.sm && gridColClasses[`sm-${cols.sm}`],
+    cols.md && gridColClasses[`md-${cols.md}`],
+    cols.lg && gridColClasses[`lg-${cols.lg}`],
+    cols.xl && gridColClasses[`xl-${cols.xl}`],
+    cols['2xl'] && gridColClasses[`2xl-${cols['2xl']}`],
   ]
     .filter(Boolean)
     .join(' ');
@@ -115,6 +156,22 @@ const spacingClasses = {
   xl: 'gap-8',
 };
 
+// Predefined direction classes
+const directionClasses = {
+  vertical: {
+    sm: 'flex-col sm:flex-row',
+    md: 'flex-col md:flex-row',
+    lg: 'flex-col lg:flex-row',
+    xl: 'flex-col xl:flex-row',
+  },
+  horizontal: {
+    sm: 'flex-row sm:flex-col',
+    md: 'flex-row md:flex-col',
+    lg: 'flex-row lg:flex-col',
+    xl: 'flex-row xl:flex-col',
+  },
+};
+
 /**
  * Responsive Stack Component
  * Stacks items vertically on mobile, can switch to horizontal on larger screens
@@ -126,14 +183,10 @@ export function ResponsiveStack({
   spacing = 'md',
   breakpoint = 'md',
 }: ResponsiveStackProps) {
-  const baseClass = 'flex';
-  const directionClass =
-    direction === 'vertical'
-      ? `flex-col ${breakpoint}:flex-row`
-      : `flex-row ${breakpoint}:flex-col`;
+  const directionClass = directionClasses[direction][breakpoint];
 
   return (
-    <div className={cn(baseClass, directionClass, spacingClasses[spacing], className)}>
+    <div className={cn('flex', directionClass, spacingClasses[spacing], className)}>
       {children}
     </div>
   );

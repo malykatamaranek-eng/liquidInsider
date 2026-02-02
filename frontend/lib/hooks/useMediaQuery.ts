@@ -7,12 +7,22 @@ import { useState, useEffect } from 'react';
  * Usage: const isMobile = useMediaQuery('(max-width: 768px)');
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  // Initialize with undefined to prevent hydration mismatch
+  const [matches, setMatches] = useState<boolean>(() => {
+    // Check if we're in the browser
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return;
+
     const media = window.matchMedia(query);
     
-    // Set initial value
+    // Update state with current value
     setMatches(media.matches);
 
     // Listen for changes
